@@ -63,7 +63,7 @@ function* loginSaga(action: { type: string; payload: { email: any; password: any
   }
 }
 
-export default function* watchSaga() {
+export default function* watchAuthSaga() {
   yield takeLatest(SIGN_UP_REQUEST, signUpSaga);
   yield takeLatest(LOGIN_REQUEST, loginSaga);
 }
