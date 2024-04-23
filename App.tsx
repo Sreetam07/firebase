@@ -1,15 +1,26 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import LogInScreen from './src/auth/LogInScreen';
+import SignUpScreen from './src/auth/SignUpScreen';
+import AddProductScreen from './src/products/AddProductScreen';
+import EditProductScreen from './src/products/EditProductScreen';
+import ProductListScreen from './src/products/ProductListScreen';
 
-const RootStack = createStackNavigator();
+const Stack = createStackNavigator();
 const App = () => {
   return (
-    <View>
-      <Text>App</Text>
-    </View>
-  )
-}
 
-export default App
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="LogIn" component={LogInScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Add Product" component={AddProductScreen} />
+        <Stack.Screen name="Edit Product" component={EditProductScreen} />
+        <Stack.Screen name="Product List" component={ProductListScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default App;
