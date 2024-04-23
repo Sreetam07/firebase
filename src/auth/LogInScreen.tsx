@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Button, TextInput, Text} from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+import { loginRequest } from '../redux/actions';
 
 interface LoginScreenProps {
   navigation: any;
@@ -9,7 +11,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {};
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    dispatch(loginRequest(email, password));
+  };
 
   return (
     <View style={styles.container}>

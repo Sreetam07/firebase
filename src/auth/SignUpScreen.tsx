@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { Button, TextInput, Text } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+import { signUpRequest } from '../redux/actions';
 
 interface SignUpScreenProps {
   navigation: any;
@@ -9,9 +11,47 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const dispatch = useDispatch();
+
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSignUp = () => {
-    
+    if (!email.trim() || !password.trim()) {
+      setError('Email and password are required');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError('Invalid email format');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+    if (password === confirmPassword) {
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      dispatch(signUpRequest(email, password));
+    } else {
+      Alert.alert('Passwords do not match');
+    }
+  };
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    setError(''); 
+  };
+
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
+    setError(''); 
   };
 
   return (
@@ -19,13 +59,13 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       <TextInput
         label="Email"
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={handleEmailChange}
         style={styles.input}
       />
       <TextInput
         label="Password"
         value={password}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={handlePasswordChange}
         secureTextEntry
         style={styles.input}
       />
@@ -45,6 +85,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
           Login
         </Text>
       </Text>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   );
 };
@@ -67,6 +108,11 @@ const styles = StyleSheet.create({
   link: {
     color: 'blue',
     textDecorationLine: 'underline',
+  },
+  error: {
+    color: 'red',
+    marginTop: 8,
+    textAlign:'center'
   },
 });
 
