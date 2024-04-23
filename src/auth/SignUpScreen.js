@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { Button, TextInput, Text } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
-import { signUpRequest } from '../redux/actions';
+import { useDispatch,useSelector } from 'react-redux';
+import { signUpRequest } from '../redux/actions/authActions';
 
-interface SignUpScreenProps {
-  navigation: any;
-}
-const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
+
+const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
   const dispatch = useDispatch();
+  const loginError = useSelector(state => state.auth.error); 
 
-  const isValidEmail = (email: string) => {
+  const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -35,25 +34,33 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       return;
     }
     if (password === confirmPassword) {
+      
+      dispatch(signUpRequest(email, password));
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-      dispatch(signUpRequest(email, password));
+   
     } else {
       Alert.alert('Passwords do not match');
     }
   };
 
-  const handleEmailChange = (text: string) => {
+  const handleEmailChange = (text) => {
     setEmail(text);
     setError(''); 
+    
   };
 
-  const handlePasswordChange = (text: string) => {
+  const handlePasswordChange = (text) => {
     setPassword(text);
     setError(''); 
   };
-
+  const getErrorMessage = () => {
+    if (loginError && loginError.includes('auth/email-already-in-use')) {
+      return <Text style={styles.error}>The email address is already in use by another account.</Text>;
+    }
+    return null;
+  };
   return (
     <View style={styles.container}>
       <TextInput
@@ -86,6 +93,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
         </Text>
       </Text>
       {error ? <Text style={styles.error}>{error}</Text> : null}
+      {loginError ? <Text style={styles.error}>{getErrorMessage()}</Text> : null}
     </View>
   );
 };

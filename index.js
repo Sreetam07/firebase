@@ -6,9 +6,6 @@ import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import { initializeApp } from '@firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-
 const firebaseConfig = {
     apiKey: "AIzaSyDttKcJvqu6sDkVBuEffitCdLa6Oci3_Vc",
     authDomain: "authentication-2e1d7.firebaseapp.com",
@@ -19,8 +16,7 @@ const firebaseConfig = {
     measurementId: "G-J7RBRBWC8L"
   };
 
-  export const FIREBASE_APP = initializeApp(firebaseConfig);
-  export const FIRESTORE_DB = getFirestore(FIREBASE_APP);
-  export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
+initializeApp(firebaseConfig);
+
 
 AppRegistry.registerComponent(appName, () => App);
