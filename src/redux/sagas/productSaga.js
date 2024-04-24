@@ -16,12 +16,32 @@ import {
 } from '../actions/productActions';
 
 function* addProductToFirestore(product) {
+  const { name, price } = product;
+  try {
+    const docRef = yield call(firestore().collection('products').add, { name, price });
+    const addedProduct = yield call(docRef.get);
+    return { id: addedProduct.id, ...addedProduct.data() };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 function* editProductInFirestore(productId, productData) {
+  try {
+    yield call(firestore().collection('products').doc(productId).update, productData);
+    const updatedProduct = yield call(firestore().collection('products').doc(productId).get);
+    return { id: updatedProduct.id, ...updatedProduct.data() };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 function* deleteProductFromFirestore(productId) {
+  try {
+    yield call(firestore().collection('products').doc(productId).delete);
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 function* addProductSaga(action) {
@@ -55,7 +75,6 @@ function* fetchProductsSaga() {
   try {
     const productsSnapshot = yield call(firestore().collection('products').get);
     const products = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
     yield put({ type: FETCH_PRODUCTS_SUCCESS, payload: products });
   } catch (error) {
     yield put({ type: FETCH_PRODUCTS_FAILURE, payload: error.message });
