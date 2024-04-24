@@ -14,16 +14,22 @@ import {
   FETCH_PRODUCTS_SUCCESS,
   FETCH_PRODUCTS_FAILURE,
 } from '../actions/productActions';
+import { collection, addDoc } from "firebase/firestore";
+import {db} from '../../../index';
 
 function* addProductToFirestore(product) {
-  const { name, price } = product;
-  try {
-    const docRef = yield call(firestore().collection('products').add, { name, price });
-    const addedProduct = yield call(docRef.get);
-    return { id: addedProduct.id, ...addedProduct.data() };
-  } catch (error) {
-    throw new Error(error.message);
-  }
+    const { name, price, description, image } = product;
+    try {
+      const docRef = yield addDoc(collection(db, "products"), {
+        name: name,
+        price: price,
+        description: description,
+        imageUrl: image
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
 }
 
 function* editProductInFirestore(productId, productData) {

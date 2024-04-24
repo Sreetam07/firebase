@@ -12,7 +12,7 @@ const AddProductScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const handleAddProduct = () => {
-    if (!name.trim() || !price.trim()) {
+    if (!name.trim() || !price.trim() || !description.trim() || !image.trim()) {
       alert('Please fill in all required fields');
       return;
     }

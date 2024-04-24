@@ -6,6 +6,8 @@ import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import { initializeApp } from '@firebase/app';
+import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
     apiKey: "AIzaSyDttKcJvqu6sDkVBuEffitCdLa6Oci3_Vc",
     authDomain: "authentication-2e1d7.firebaseapp.com",
@@ -16,7 +18,6 @@ const firebaseConfig = {
     measurementId: "G-J7RBRBWC8L"
   };
 
-initializeApp(firebaseConfig);
-
-
+  const app = initializeApp(firebaseConfig);
+  export const db = getFirestore(app);
 AppRegistry.registerComponent(appName, () => App);
