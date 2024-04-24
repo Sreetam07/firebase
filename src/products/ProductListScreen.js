@@ -22,8 +22,8 @@ const ProductListScreen = ({ navigation }) => {
     navigation.navigate('AddProduct');
   };
 
-  const handleEditProduct = (productId) => {
-    navigation.navigate('EditProduct', { productId });
+  const handleEditProduct = (productName) => {
+    navigation.navigate('EditProduct',  productName );
   };
 
   const handleDeleteProduct = (productId) => {
@@ -38,7 +38,7 @@ const ProductListScreen = ({ navigation }) => {
         <Image source={{ uri: item.imageUrl }} style={styles.image} />
         <Text style={styles.price}>${item.price}</Text>
         <View style={styles.buttonsContainer}>
-          <Button mode="outlined" onPress={() => handleEditProduct(item.id)}>
+          <Button mode="outlined" onPress={() => handleEditProduct(item.name)}>
             Edit
           </Button>
           <Button mode="outlined" onPress={() => handleDeleteProduct(item.id)}>

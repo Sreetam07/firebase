@@ -14,7 +14,7 @@ import {
   FETCH_PRODUCTS_SUCCESS,
   FETCH_PRODUCTS_FAILURE,
 } from '../actions/productActions';
-import { collection, addDoc,getDocs } from "firebase/firestore";
+import { collection, addDoc,getDocs, updateDoc } from "firebase/firestore";
 import {db} from '../../../index';
 
 function* addProductToFirestore(product) {
@@ -32,15 +32,16 @@ function* addProductToFirestore(product) {
     }
 }
 
-function* editProductInFirestore(productId, productData) {
-  try {
-    yield call(firestore().collection('products').doc(productId).update, productData);
-    const updatedProduct = yield call(firestore().collection('products').doc(productId).get);
-    return { id: updatedProduct.id, ...updatedProduct.data() };
-  } catch (error) {
-    throw new Error(error.message);
+function* editProductInFirestore(productName, productData) {
+    try {
+      yield call(firestore().collection('products').doc(productName).update, productData);
+      const updatedProduct = yield call(firestore().collection('products').doc(productName).get);
+      console.log("update product",updatedProduct);
+      return { id: updatedProduct.id, ...updatedProduct.data() };
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
-}
 
 function* deleteProductFromFirestore(productId) {
   try {
@@ -61,7 +62,7 @@ function* addProductSaga(action) {
 
 function* editProductSaga(action) {
   try {
-    const product = yield call(editProductInFirestore, action.payload.productId, action.payload.productData);
+    const product = yield call(editProductInFirestore, action.payload.productName, action.payload.productData);
     yield put({ type: EDIT_PRODUCT_SUCCESS, payload: product });
   } catch (error) {
     yield put({ type: EDIT_PRODUCT_FAILURE, payload: error.message });

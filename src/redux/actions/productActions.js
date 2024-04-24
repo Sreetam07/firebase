@@ -21,9 +21,9 @@ export const addProductRequest = (productData) => ({
   payload: productData,
 });
 
-export const editProductRequest = (productId, productData) => ({
+export const editProductRequest = (productName, productData) => ({
   type: EDIT_PRODUCT_REQUEST,
-  payload: { productId, productData },
+  payload: { productName, productData },
 });
 
 export const deleteProductRequest = (productId) => ({

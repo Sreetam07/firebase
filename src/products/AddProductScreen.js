@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+import {launchImageLibrary} from 'react-native-image-picker';
 import { useDispatch } from 'react-redux';
 import { addProductRequest } from '../redux/actions/productActions';
 
@@ -8,16 +9,31 @@ const AddProductScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState(null);
   const dispatch = useDispatch();
 
+  const handleChooseImage = () => {
+    const options = {
+      noData: true,
+    };
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+          } else {
+            const source = { uri: response.assets[0].uri };
+            setImage(source);
+          }
+    });
+  };
+
   const handleAddProduct = () => {
-    if (!name.trim() || !price.trim() || !description.trim() || !image.trim()) {
+    if (!name.trim() || !price.trim() || !description.trim() || !image) {
       alert('Please fill in all required fields');
       return;
     }
-
-    dispatch(addProductRequest({ name, price, description, image }));
+    dispatch(addProductRequest({ name, price, description, image: image.uri }));
 
     navigation.navigate('ProductList');
   };
@@ -44,15 +60,13 @@ const AddProductScreen = ({ navigation }) => {
         onChangeText={setDescription}
         multiline
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Image URL"
-        value={image}
-        onChangeText={setImage}
-      />
+      <Button mode="contained" onPress={handleChooseImage} style={styles.button}>
+        Choose Image
+      </Button>
+      {image && <Image source={image} style={{ width: 200, height: 200, marginBottom: 10 }} />}
       <Button mode="contained" onPress={handleAddProduct} style={styles.button}>
-      Add Product
-        </Button>
+        Add Product
+      </Button>
     </View>
   );
 };
@@ -71,6 +85,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+  },
+  button: {
+    marginTop: 10,
   },
 });
 
