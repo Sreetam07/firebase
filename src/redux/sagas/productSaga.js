@@ -14,7 +14,7 @@ import {
   FETCH_PRODUCTS_SUCCESS,
   FETCH_PRODUCTS_FAILURE,
 } from '../actions/productActions';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc,getDocs } from "firebase/firestore";
 import {db} from '../../../index';
 
 function* addProductToFirestore(product) {
@@ -76,16 +76,22 @@ function* deleteProductSaga(action) {
     yield put({ type: DELETE_PRODUCT_FAILURE, payload: error.message });
   }
 }
-
-function* fetchProductsSaga() {
-  try {
-    const productsSnapshot = yield call(firestore().collection('products').get);
-    const products = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    yield put({ type: FETCH_PRODUCTS_SUCCESS, payload: products });
-  } catch (error) {
-    yield put({ type: FETCH_PRODUCTS_FAILURE, payload: error.message });
+  
+  function* fetchProductsSaga() {
+    try {
+      const querySnapshot = yield call(getDocs, collection(db, 'products'));
+      
+      const products = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+  
+      yield put({ type: FETCH_PRODUCTS_SUCCESS, payload: products });
+    } catch (error) {
+      yield put({ type: FETCH_PRODUCTS_FAILURE, payload: error.message });
+    }
   }
-}
+  
 
 export default function* productSaga() {
   yield takeLatest(FETCH_PRODUCTS_REQUEST, fetchProductsSaga);

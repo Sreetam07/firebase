@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import { View, FlatList, StyleSheet} from 'react-native';
+import { View, FlatList, StyleSheet, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductsRequest, deleteProductRequest } from '../redux/actions/productActions';
 import { logoutRequest } from '../redux/actions/authActions';
-import { Button, Text } from 'react-native-paper';
+import { Button, Text, Card } from 'react-native-paper'; 
 
 const ProductListScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.products);
+  const products = useSelector((state) => state.product.products);
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
@@ -30,21 +30,31 @@ const ProductListScreen = ({ navigation }) => {
     dispatch(deleteProductRequest(productId));
   };
 
+  const renderProductItem = ({ item }) => (
+    <Card style={styles.card}>
+      <Card.Content>
+        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.description}>{item.description}</Text>
+        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+        <Text style={styles.price}>${item.price}</Text>
+        <View style={styles.buttonsContainer}>
+          <Button mode="outlined" onPress={() => handleEditProduct(item.id)}>
+            Edit
+          </Button>
+          <Button mode="outlined" onPress={() => handleDeleteProduct(item.id)}>
+            Delete
+          </Button>
+        </View>
+      </Card.Content>
+    </Card>
+  );
+console.log("products",products);
   return (
     <View style={styles.container}>
       <FlatList
         data={products}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text>{item.name}</Text>
-            <Text>${item.price}</Text>
-            <View style={styles.buttonsContainer}>
-              <Button title="Edit" onPress={() => handleEditProduct(item.id)} />
-              <Button title="Delete" onPress={() => handleDeleteProduct(item.id)} />
-            </View>
-          </View>
-        )}
+        keyExtractor={(item, index) => item.name + index}
+        renderItem={renderProductItem}
       />
 
       <View style={styles.bottomButtonsContainer}>
@@ -64,18 +74,31 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  card: {
     marginBottom: 10,
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-    borderRadius: 5,
+    elevation: 4, 
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  description: {
+    marginBottom: 5,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    marginBottom: 10,
+  },
+  price: {
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 10,
   },
   bottomButtonsContainer: {
     flexDirection: 'row',
